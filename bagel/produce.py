@@ -195,6 +195,14 @@ def game_record(data, control_number):
             indicators=[' ', ' '],
             subfields=['a', f'Game duration: {data.duration}']))
 
+    # content note
+    if data.content:
+        tags.append(
+            Field(
+                tag='505',
+                indicators=['0', ' '],
+                subfields=['a', data.content]))
+
     # 520 summary
     if data.desc:
         tags.append(
@@ -237,8 +245,6 @@ def game_record(data, control_number):
             'r', 'i',
             's', 'g'
         ]
-        if data.item_msg:
-            subfields.extend(['m', data.item_msg])
 
         tags.append(
             Field(
@@ -246,7 +252,6 @@ def game_record(data, control_number):
                 indicators=[' ', ' '],
                 subfields=subfields))
 
-    print(len(data.crown_barcodes), f'"{data.crown_barcodes}"')
     for barcode in data.crown_barcodes:
         subfields = [
             'i', barcode,

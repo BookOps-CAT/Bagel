@@ -1,8 +1,6 @@
 from collections import namedtuple
 import csv
 
-from pymarc import Record
-
 
 Row = namedtuple('Row', [
     'processing',
@@ -23,7 +21,7 @@ Row = namedtuple('Row', [
     'publisher',
     'pub_date',
     'desc',
-    'item_msg',
+    'content',
     'email'])
 
 
@@ -70,5 +68,5 @@ def form_data_reader(fh):
                 publisher=row[16].strip(),
                 pub_date=row[17].strip(),  # validation?
                 desc=row[18].strip(),
-                item_msg=row[19].strip(),
+                content=row[19].strip(),
                 email=row[20])
