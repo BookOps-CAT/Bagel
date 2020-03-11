@@ -26,7 +26,7 @@ def save2marc(record, fh_out):
         out.write(record.as_marc())
 
 
-def game_record(data, control_number):
+def game_record(data, control_number, suppressed=True, status_code='-'):
     """
     Creates a record object from data namedtuple
     args:
@@ -243,7 +243,7 @@ def game_record(data, control_number):
             'q', '11',
             't', '53',
             'r', 'i',
-            's', 'g'
+            's', status_code
         ]
 
         tags.append(
@@ -260,7 +260,7 @@ def game_record(data, control_number):
             'q', '11',
             't', '53',
             'r', 'i',
-            's', 'g'
+            's', status_code
         ]
 
         tags.append(
@@ -270,11 +270,15 @@ def game_record(data, control_number):
                 subfields=subfields))
 
     # 949 command line
+    if suppressed:
+        opac_display_command = 'b3=n'
+    else:
+        opac_display_command = ''
     tags.append(
         Field(
             tag='949',
             indicators=[' ', ' '],
-            subfields=['a', '*b2=o']))
+            subfields=['a', f'*b2=o;{opac_display_command}']))
 
     for tag in tags:
         record.add_ordered_field(tag)
