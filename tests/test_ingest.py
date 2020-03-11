@@ -117,6 +117,16 @@ def test_remove_white_space_and_trailing_punctuation_with_None():
     assert remove_white_space_and_trailing_punctuation(None) == ''
 
 
+def test_remove_white_space_and_trailing_punctuation_except_closing_parenthesis():
+    assert remove_white_space_and_trailing_punctuation(
+        'Some desc (details).') == 'Some desc (details)'
+
+
+def test_remove_white_space_and_trailing_punctuation_except_exclamation_mark():
+    assert remove_white_space_and_trailing_punctuation(
+        'This is madness! ') == 'This is madness!'
+
+
 def test_left_right_white_space():
     assert remove_left_white_space(
         '  Some title') == 'Some title'
@@ -133,3 +143,7 @@ def test_str2list():
 
 def test_str2list_with_trailing_white_space():
     assert str2list('1  ;  2 ;3') == ['1', '2', '3']
+
+
+def test_str2list_with_one_element():
+    assert str2list('1') == ['1']

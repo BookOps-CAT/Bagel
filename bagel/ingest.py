@@ -57,7 +57,10 @@ def remove_white_space_and_trailing_punctuation(string):
     if string:
         string = remove_left_white_space(string)
         while has_alphanumeric_last(string) is False:
-            string = string[:-1]
+            if string[-1] not in (')', '!', '?'):
+                string = string[:-1]
+            else:
+                break
     else:
         string = ''
 
@@ -77,7 +80,7 @@ def form_data_reader(fh):
     yields: namedTuple, row of data
     """
 
-    with open(fh, 'r') as csvfile:
+    with open(fh, 'r', encoding='utf-8') as csvfile:
         reader = csv.reader(csvfile)
 
         # skip header
@@ -87,11 +90,11 @@ def form_data_reader(fh):
             # add regex validation?
             central_barcodes = str2list(row[7])
             crown_barcodes = str2list(row[8])
-            title_other = str2list(row[10])
-            isbn = str2list(row[13])
-            upc = str2list(row[14])
+            isbns = str2list(row[13])
+            upcs = str2list(row[14])
             title = remove_white_space_and_trailing_punctuation(row[2])  # run regex to remove trailing periods
-            title_other = lower_first_letter(row[10])
+            subtitle = remove_white_space_and_trailing_punctuation(row[11])
+            title_other = str2list(row[10])
             desc = remove_white_space_and_trailing_punctuation(row[18])
             content = remove_white_space_and_trailing_punctuation(row[19])
 
@@ -106,13 +109,13 @@ def form_data_reader(fh):
                 crown_barcodes=crown_barcodes,
                 price=f'{float(row[9].strip()):.2f}',
                 title_other=title_other,
-                subtitle=row[11].strip(),
+                subtitle=subtitle,
                 author=row[12].strip(),
-                isbn=isbn,
-                upc=upc,
+                isbn=isbns,
+                upc=upcs,
                 pub_place=row[15].strip(),
                 publisher=row[16].strip(),
                 pub_date=row[17].strip(),  # validation?
                 desc=desc,
-                content=row[19].strip(),
+                content=content,
                 email=row[20])

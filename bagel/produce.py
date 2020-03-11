@@ -102,7 +102,7 @@ def game_record(data, control_number):
 
     if data.subtitle:
         subfields[-1] = f'{subfields[-1]} : '
-        subfields.extend('b', data.subtitle)
+        subfields.extend(['b', data.subtitle])
 
     if data.title_part:
         subfields[-1] = f'{subfields[-1]}. '
@@ -134,7 +134,7 @@ def game_record(data, control_number):
             Field(
                 tag='246',
                 indicators=['1', '3'],
-                subfields=['a', data.title_other]))
+                subfields=['a', title]))
 
     # 264 publication tags
     subfields = []
@@ -195,7 +195,7 @@ def game_record(data, control_number):
             indicators=[' ', ' '],
             subfields=['a', f'Game duration: {data.duration}']))
 
-    # content note
+    # content note 505
     if data.content:
         tags.append(
             Field(
@@ -262,8 +262,6 @@ def game_record(data, control_number):
             'r', 'i',
             's', 'g'
         ]
-        if data.item_msg:
-            subfields.extend(['m', data.item_msg])
 
         tags.append(
             Field(
