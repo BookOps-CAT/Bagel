@@ -2,33 +2,37 @@ from collections import namedtuple
 import csv
 
 
-Row = namedtuple('Row', [
-    'processing',
-    'title',
-    'title_part',
-    'players',
-    'duration',
-    'age',
-    'central_barcodes',
-    'crown_barcodes',
-    'price',
-    'title_other',
-    'subtitle',
-    'author',
-    'isbn',
-    'upc',
-    'pub_place',
-    'publisher',
-    'pub_date',
-    'desc',
-    'content',
-    'email'])
+Row = namedtuple(
+    "Row",
+    [
+        "processing",
+        "title",
+        "title_part",
+        "players",
+        "duration",
+        "age",
+        "central_barcodes",
+        "crown_barcodes",
+        "price",
+        "title_other",
+        "subtitle",
+        "author",
+        "isbn",
+        "upc",
+        "pub_place",
+        "publisher",
+        "pub_date",
+        "desc",
+        "content",
+        "email",
+    ],
+)
 
 
 def lower_first_letter(string):
     try:
         string = string.strip()
-        string = f'{string[0].lower()}{string[1:]}'
+        string = f"{string[0].lower()}{string[1:]}"
     except IndexError:
         string = string
     except AttributeError:
@@ -46,6 +50,7 @@ def has_alphanumeric_last(string=None):
     except IndexError:
         raise
 
+
 def remove_left_white_space(string=None):
     try:
         return string.lstrip()
@@ -57,18 +62,18 @@ def remove_white_space_and_trailing_punctuation(string):
     if string:
         string = remove_left_white_space(string)
         while has_alphanumeric_last(string) is False:
-            if string[-1] not in (')', '!', '?'):
+            if string[-1] not in (")", "!", "?"):
                 string = string[:-1]
             else:
                 break
     else:
-        string = ''
+        string = ""
 
     return string
 
 
 def str2list(string):
-    return [i.strip() for i in string.split(';') if i.strip() != '']
+    return [i.strip() for i in string.split(";") if i.strip() != ""]
 
 
 def form_data_reader(fh):
@@ -80,7 +85,7 @@ def form_data_reader(fh):
     yields: namedTuple, row of data
     """
 
-    with open(fh, 'r', encoding='utf-8') as csvfile:
+    with open(fh, "r", encoding="utf-8") as csvfile:
         reader = csv.reader(csvfile)
 
         # skip header
@@ -92,7 +97,9 @@ def form_data_reader(fh):
             crown_barcodes = str2list(row[8])
             isbns = str2list(row[13])
             upcs = str2list(row[14])
-            title = remove_white_space_and_trailing_punctuation(row[2])  # run regex to remove trailing periods
+            title = remove_white_space_and_trailing_punctuation(
+                row[2]
+            )  # run regex to remove trailing periods
             subtitle = remove_white_space_and_trailing_punctuation(row[11])
             title_other = str2list(row[10])
             desc = remove_white_space_and_trailing_punctuation(row[18])
@@ -107,7 +114,7 @@ def form_data_reader(fh):
                 age=row[6].strip(),
                 central_barcodes=central_barcodes,
                 crown_barcodes=crown_barcodes,
-                price=f'{float(row[9].strip()):.2f}',
+                price=f"{float(row[9].strip()):.2f}",
                 title_other=title_other,
                 subtitle=subtitle,
                 author=row[12].strip(),
@@ -118,4 +125,5 @@ def form_data_reader(fh):
                 pub_date=row[17].strip(),  # validation?
                 desc=desc,
                 content=content,
-                email=row[20])
+                email=row[20],
+            )
