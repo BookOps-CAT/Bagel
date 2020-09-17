@@ -3,8 +3,9 @@ from datetime import date, datetime
 from pymarc import Field, Record
 
 
-def generate_control_no(start, end):
-    pass
+def generate_controlNo(sequence_no):
+    sequence_no = str(sequence_no).zfill(7)
+    return f"bkl-bgm-{sequence_no}"
 
 
 def check_article(title):
