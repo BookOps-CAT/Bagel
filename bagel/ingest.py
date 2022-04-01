@@ -13,6 +13,7 @@ Row = namedtuple(
         "age",
         "central_barcodes",
         "crown_barcodes",
+        "bushwick_barcodes",
         "price",
         "title_other",
         "subtitle",
@@ -95,15 +96,16 @@ def form_data_reader(fh):
             # add regex validation?
             central_barcodes = str2list(row[7])
             crown_barcodes = str2list(row[8])
-            isbns = str2list(row[13])
-            upcs = str2list(row[14])
+            bushwick_barcodes = str2list(row[9])
+            isbns = str2list(row[14])
+            upcs = str2list(row[15])
             title = remove_white_space_and_trailing_punctuation(
                 row[2]
             )  # run regex to remove trailing periods
-            subtitle = remove_white_space_and_trailing_punctuation(row[11])
-            title_other = str2list(row[10])
-            desc = remove_white_space_and_trailing_punctuation(row[18])
-            content = remove_white_space_and_trailing_punctuation(row[19])
+            subtitle = remove_white_space_and_trailing_punctuation(row[12])
+            title_other = str2list(row[11])
+            desc = remove_white_space_and_trailing_punctuation(row[19])
+            content = remove_white_space_and_trailing_punctuation(row[20])
 
             yield Row(
                 processing=row[1],
@@ -114,16 +116,17 @@ def form_data_reader(fh):
                 age=row[6].strip(),
                 central_barcodes=central_barcodes,
                 crown_barcodes=crown_barcodes,
-                price=f"{float(row[9].strip()):.2f}",
+                bushwick_barcodes=bushwick_barcodes,
+                price=f"{float(row[10].strip()):.2f}",
                 title_other=title_other,
                 subtitle=subtitle,
-                author=row[12].strip(),
+                author=row[13].strip(),
                 isbn=isbns,
                 upc=upcs,
-                pub_place=row[15].strip(),
-                publisher=row[16].strip(),
-                pub_date=row[17].strip(),  # validation?
+                pub_place=row[16].strip(),
+                publisher=row[17].strip(),
+                pub_date=row[18].strip(),  # validation?
                 desc=desc,
                 content=content,
-                email=row[20],
+                email=row[21],
             )

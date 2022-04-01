@@ -3,6 +3,29 @@ from datetime import date, datetime
 from pymarc import Field, Record
 
 
+def create_item_field(shelfcode, barcode, price, status_code):
+    """
+    Creates item MARC tag subfields
+    """
+    subfields = [
+        "i",
+        barcode,
+        "l",
+        shelfcode,
+        "p",
+        price,
+        "q",
+        "11",
+        "t",
+        "53",
+        "r",
+        "i",
+        "s",
+        status_code,
+    ]
+    return Field(tag="960", indicators=[" ", " "], subfields=subfields)
+
+
 def generate_controlNo(sequence_no):
     sequence_no = str(sequence_no).zfill(7)
     return f"bkl-bgm-{sequence_no}"
@@ -214,44 +237,16 @@ def game_record(data, control_number, suppressed=True, status_code="-"):
 
     # 960 item field
     for barcode in data.central_barcodes:
-        subfields = [
-            "i",
-            barcode,
-            "l",
-            "02abg",
-            "p",
-            data.price,
-            "q",
-            "11",
-            "t",
-            "53",
-            "r",
-            "i",
-            "s",
-            status_code,
-        ]
-
-        tags.append(Field(tag="960", indicators=[" ", " "], subfields=subfields))
+        field = create_item_field("02abg", barcode, data.price, status_code)
+        tags.append(field)
 
     for barcode in data.crown_barcodes:
-        subfields = [
-            "i",
-            barcode,
-            "l",
-            "30abg",
-            "p",
-            data.price,
-            "q",
-            "11",
-            "t",
-            "53",
-            "r",
-            "i",
-            "s",
-            status_code,
-        ]
+        field = create_item_field("30abg", barcode, data.price, status_code)
+        tags.append(field)
 
-        tags.append(Field(tag="960", indicators=[" ", " "], subfields=subfields))
+    for barcode in data.bushwick_barcodes:
+        field = create_item_field("29abg", barcode, data.price, status_code)
+        tags.append(field)
 
     # 949 command line
     if suppressed:
