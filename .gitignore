@@ -126,3 +126,5 @@ dmypy.json
 
 # local temp data
 temp.py
+*.mrc
+*.mrk
