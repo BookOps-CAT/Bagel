@@ -8,5 +8,5 @@
 3. Ammend in run.py controlNo sequence (use the sheet for reference)
 4. Run the script (run.py)
 5. Validate produced records in MarcEdit (optional)
-6. Load to Sierra using local (I) Load Overload New (insert or overlay)
-~~7. Run suppression on the bibs~~
+6. Load to Sierra using local (I) Load Overload New (insert or overlay) 
+7. ~~Run suppression on the bibs~~
