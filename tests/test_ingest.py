@@ -16,7 +16,7 @@ def test_form_data_reader_headings():
     """
     make sure form data in csv format in in test/temp format
     """
-    fh = "./files/B(a)GEL metadata submission form (Responses) - Form Responses 1.csv"
+    fh = "tests/files/B(a)GEL metadata submission form (Responses) - Form Responses 1.csv"
     with open(fh, "r") as csvfile:
         reader = csv.reader(csvfile)
         header = next(reader)
