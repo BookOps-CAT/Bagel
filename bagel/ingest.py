@@ -14,6 +14,9 @@ Row = namedtuple(
         "central_barcodes",
         "crown_barcodes",
         "bushwick_barcodes",
+        "mckinley_barcodes",
+        "newutrecht_barcodes",
+        "windsor_barcodes",
         "price",
         "title_other",
         "subtitle",
@@ -97,15 +100,18 @@ def form_data_reader(fh):
             central_barcodes = str2list(row[7])
             crown_barcodes = str2list(row[8])
             bushwick_barcodes = str2list(row[9])
-            isbns = str2list(row[14])
-            upcs = str2list(row[15])
+            mckinley_barcodes = str2list(row[10])
+            newutrecht_barcodes = str2list(row[11])
+            windsor_barcodes = str2list(row[12])
+            isbns = str2list(row[17])
+            upcs = str2list(row[18])
             title = remove_white_space_and_trailing_punctuation(
                 row[2]
             )  # run regex to remove trailing periods
-            subtitle = remove_white_space_and_trailing_punctuation(row[12])
-            title_other = str2list(row[11])
-            desc = remove_white_space_and_trailing_punctuation(row[19])
-            content = remove_white_space_and_trailing_punctuation(row[20])
+            subtitle = remove_white_space_and_trailing_punctuation(row[15])
+            title_other = str2list(row[14])
+            desc = remove_white_space_and_trailing_punctuation(row[22])
+            content = remove_white_space_and_trailing_punctuation(row[23])
 
             yield Row(
                 processing=row[1],
@@ -117,16 +123,19 @@ def form_data_reader(fh):
                 central_barcodes=central_barcodes,
                 crown_barcodes=crown_barcodes,
                 bushwick_barcodes=bushwick_barcodes,
-                price=f"{float(row[10].strip()):.2f}",
+                mckinley_barcodes=mckinley_barcodes,
+                newutrecht_barcodes=newutrecht_barcodes,
+                windsor_barcodes=windsor_barcodes,
+                price=f"{float(row[13].strip()):.2f}",
                 title_other=title_other,
                 subtitle=subtitle,
-                author=row[13].strip(),
+                author=row[16].strip(),
                 isbn=isbns,
                 upc=upcs,
-                pub_place=row[16].strip(),
-                publisher=row[17].strip(),
-                pub_date=row[18].strip(),  # validation?
+                pub_place=row[19].strip(),
+                publisher=row[20].strip(),
+                pub_date=row[21].strip(),  # validation?
                 desc=desc,
                 content=content,
-                email=row[21],
+                email=row[24],
             )

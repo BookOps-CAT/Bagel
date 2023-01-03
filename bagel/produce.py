@@ -248,6 +248,18 @@ def game_record(data, control_number, suppressed=True, status_code="-"):
         field = create_item_field("29abg", barcode, data.price, status_code)
         tags.append(field)
 
+    for barcode in data.mckinley_barcodes:
+        field = create_item_field("67abg", barcode, data.price, status_code)
+        tags.append(field)
+
+    for barcode in data.newutrecht_barcodes:
+        field = create_item_field("51abg", barcode, data.price, status_code)
+        tags.append(field)
+
+    for barcode in data.windsor_barcodes:
+        field = create_item_field("77abg", barcode, data.price, status_code)
+        tags.append(field)
+
     # 949 command line
     if suppressed:
         opac_display_command = "b3=n"
