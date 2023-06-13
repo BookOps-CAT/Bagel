@@ -207,7 +207,11 @@ def game_record(data, control_number, suppressed=True, status_code="-"):
 
     # 520 summary
     if data.desc:
-        tags.append(Field(tag="520", indicators=[" ", " "], subfields=["a", data.desc]))
+        if data.desc[-1].isalnum():
+            desc = f"{data.desc}."
+        else:
+            desc = data.desc
+        tags.append(Field(tag="520", indicators=[" ", " "], subfields=["a", desc]))
 
     # 521 note
     tags.append(Field(tag="521", indicators=[" ", " "], subfields=["a", data.age]))
