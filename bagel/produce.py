@@ -1,6 +1,10 @@
 from datetime import date, datetime
 
-from pymarc import Field, Record
+from pymarc import Field, Record  # type: ignore
+
+
+def _date_today():
+    return date.strftime(date.today(), "%y%m%d")
 
 
 def create_item_field(shelfcode, barcode, price, status_code):
