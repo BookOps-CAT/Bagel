@@ -1,9 +1,9 @@
-import csv
 import pytest
+import pandas as pd  # type: ignore
+from bagel.download import URL
 
 
-from context import (
-    form_data_reader,
+from bagel.ingest import (
     lower_first_letter,
     has_alphanumeric_last,
     remove_white_space_and_trailing_punctuation,
@@ -13,39 +13,32 @@ from context import (
 
 
 def test_form_data_reader_headings():
-    """
-    make sure form data in csv format in in test/temp format
-    """
-    fh = "tests/files/B(a)GEL metadata submission form (Responses) - Form Responses 1.csv"
-    with open(fh, "r") as csvfile:
-        reader = csv.reader(csvfile)
-        header = next(reader)
-
-        assert header[0] == "Timestamp"
-        assert header[1] == "Processing"
-        assert header[2] == "Title proper"
-        assert header[3] == "Name of part / expansion"
-        assert header[4] == "Number of players"
-        assert header[5] == "Game duration"
-        assert header[6] == "Recommended age"
-        assert header[7] == "Central Library Barcodes"
-        assert header[8] == "Crown Heights Barcodes"
-        assert header[9] == "Bushwick Barcodes"
-        assert header[10] == "McKinley Park Barcodes"
-        assert header[11] == "New Utrecht Barcodes"
-        assert header[12] == "Windsor Terrace Barcodes"
-        assert header[13] == "Price"
-        assert header[14] == "Other titles"
-        assert header[15] == "Subtitle"
-        assert header[16] == "Authors/designers"
-        assert header[17] == "ISBN"
-        assert header[18] == "UPC"
-        assert header[19] == "Place of publication"
-        assert header[20] == "Publisher"
-        assert header[21] == "Date of publication"
-        assert header[22] == "Description/summary"
-        assert header[23] == "List of components"
-        assert header[24] == "Email Address"
+    df = pd.read_csv(URL, usecols=range(0, 25))
+    assert df.columns[0] == "Timestamp"
+    assert df.columns[1] == "Processing"
+    assert df.columns[2] == "Title proper"
+    assert df.columns[3] == "Name of part / expansion"
+    assert df.columns[4] == "Number of players"
+    assert df.columns[5] == "Game duration"
+    assert df.columns[6] == "Recommended age"
+    assert df.columns[7] == "Central Library Barcodes"
+    assert df.columns[8] == "Crown Heights Barcodes"
+    assert df.columns[9] == "Bushwick Barcodes"
+    assert df.columns[10] == "McKinley Park Barcodes"
+    assert df.columns[11] == "New Utrecht Barcodes"
+    assert df.columns[12] == "Windsor Terrace Barcodes"
+    assert df.columns[13] == "Price"
+    assert df.columns[14] == "Other titles"
+    assert df.columns[15] == "Subtitle"
+    assert df.columns[16] == "Authors/designers"
+    assert df.columns[17] == "ISBN"
+    assert df.columns[18] == "UPC"
+    assert df.columns[19] == "Place of publication"
+    assert df.columns[20] == "Publisher"
+    assert df.columns[21] == "Date of publication"
+    assert df.columns[22] == "Description/summary"
+    assert df.columns[23] == "List of components"
+    assert df.columns[24] == "Email Address"
 
 
 def test_lower_first_letter():
