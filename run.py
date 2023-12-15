@@ -1,13 +1,15 @@
 import sys
 
-from ingest import form_data_reader
-from produce import game_record, save2marc, generate_controlNo, _date_today
-from download import get_metadata
+from bagel.ingest import form_data_reader
+from bagel.produce import game_record, save2marc, generate_controlNo, _date_today
+from bagel.download import get_metadata
+from bagel.validate import validate_csv
 
 
 def run(start_sequence: str) -> None:
-    # retrieve data and identify start of sequence
+    # retrieve data, validate csv and timestamps, identify start of sequence
     get_metadata()
+    validate_csv()
     n = int(start_sequence)
 
     # define output file

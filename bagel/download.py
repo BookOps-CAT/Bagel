@@ -1,5 +1,3 @@
-# type: ignore
-
 import pandas as pd
 
 SHEET_ID = "1Z8kWlHZXbnzP7OQWK3nLy7DEdxedPv2pW2pYodh6_dY"
