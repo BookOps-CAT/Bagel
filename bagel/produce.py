@@ -73,7 +73,7 @@ def game_record(data, control_number, suppressed=True, status_code="-"):
 
     # 005
     tags.append(
-        Field(tag="005", data=datetime.strftime(datetime.now(), "%y%m%d%H%M%S.%f"))
+        Field(tag="005", data=datetime.strftime(datetime.now(), "%Y%m%d%H%M%S.%f"))
     )
 
     # 008

@@ -43,3 +43,13 @@ def test_validate_timestamps():
         for row in reader:
             timestamp = datetime.strptime(row[0], "%m/%d/%Y %H:%M:%S")
             assert type(timestamp) is datetime
+
+
+def test_year_dtypes():
+    with open("temp/metadata.csv", "r", encoding="utf-8") as csvfile:
+        reader = csv.reader(csvfile)
+        next(reader)
+        for row in reader:
+            year = row[21]
+            print(year)
+            assert (type(year)) is str
