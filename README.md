@@ -26,7 +26,7 @@
 4. Activate project's virtual environment
     * `source ./.venv/scripts/activate`
 5. Run the following Python command in terminal (the next control # in the example is 20)
-    * `python bagel/run.py 20`
+    * `python run.py 20`
 6. Review and validate produced records in MarcEdit (optional)
 7. Load to Sierra using local (I) Load Overload New (insert or overlay) 
 8. Mark processed rows as "completed"
