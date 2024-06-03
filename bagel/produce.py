@@ -1,33 +1,25 @@
 from datetime import date, datetime
 
-from pymarc import Field, Record  # type: ignore
-
-
-def _date_today():
-    return date.strftime(date.today(), "%y%m%d")
+from pymarc import Field, Record, Subfield  # type: ignore
 
 
 def create_item_field(shelfcode, barcode, price, status_code):
     """
     Creates item MARC tag subfields
     """
-    subfields = [
-        "i",
-        barcode,
-        "l",
-        shelfcode,
-        "p",
-        price,
-        "q",
-        "11",
-        "t",
-        "53",
-        "r",
-        "i",
-        "s",
-        status_code,
-    ]
-    return Field(tag="960", indicators=[" ", " "], subfields=subfields)
+    return Field(
+        tag="960",
+        indicators=[" ", " "],
+        subfields=[
+            Subfield(code="i", value=barcode),
+            Subfield(code="l", value=shelfcode),
+            Subfield(code="p", value=price),
+            Subfield(code="q", value="11"),
+            Subfield(code="t", value="53"),
+            Subfield(code="r", value="i"),
+            Subfield(code="s", value=status_code),
+        ],
+    )
 
 
 def generate_controlNo(sequence_no):
@@ -66,13 +58,11 @@ def game_record(data, control_number, suppressed=True, status_code="-"):
     record = Record()
     record.leader = "00000crm a2200000M  4500"
 
-    tags = []
-
     # 001 - control field
-    tags.append(Field(tag="001", data=control_number))
+    record.add_ordered_field(Field(tag="001", data=control_number))
 
     # 005
-    tags.append(
+    record.add_ordered_field(
         Field(tag="005", data=datetime.strftime(datetime.now(), "%Y%m%d%H%M%S.%f"))
     )
 
@@ -82,163 +72,237 @@ def game_record(data, control_number, suppressed=True, status_code="-"):
         t008 = f"{date_created}s{data.pub_date}    xxu               vneng d"
     else:
         t008 = f"{date_created}n        xxu               vneng d"
-    tags.append(Field(tag="008", data=t008))
+    record.add_ordered_field(Field(tag="008", data=t008))
 
     # 020
     for isbn in data.isbn:
-        tags.append(Field(tag="020", indicators=[" ", " "], subfields=["a", isbn]))
+        record.add_ordered_field(
+            Field(
+                tag="020",
+                indicators=[" ", " "],
+                subfields=[Subfield(code="a", value=isbn)],
+            )
+        )
 
     # 024
     for upc in data.upc:
-        tags.append(Field(tag="024", indicators=["1", " "], subfields=["a", upc]))
+        record.add_ordered_field(
+            Field(
+                tag="024",
+                indicators=["1", " "],
+                subfields=[Subfield(code="a", value=upc)],
+            )
+        )
 
     # 040
-    tags.append(
+    record.add_ordered_field(
         Field(
             tag="040",
             indicators=[" ", " "],
-            subfields=["a", "BKL", "b", "eng", "e", "rda", "c", "BKL"],
+            subfields=[
+                Subfield(code="a", value="BKL"),
+                Subfield(code="b", value="eng"),
+                Subfield(code="e", value="rda"),
+                Subfield(code="c", value="BKL"),
+            ],
         )
     )
 
     # 099
-    tags.append(Field(tag="099", indicators=[" ", " "], subfields=["a", "BOARD GAME"]))
+    record.add_ordered_field(
+        Field(
+            tag="099",
+            indicators=[" ", " "],
+            subfields=[Subfield(code="a", value="BOARD GAME")],
+        )
+    )
 
     # 245 (no final puctuation neeeded per new PCC ISBD policy)
-    subfields = []
+    title_subfields = []
     if not data.title:
         raise ValueError("Missing title data")
     else:
-        subfields.extend(["a", data.title])
+        title_subfields.append(Subfield(code="a", value=data.title))
 
     if data.subtitle:
-        subfields[-1] = f"{subfields[-1]} : "
-        subfields.extend(["b", data.subtitle])
+        title_subfields.append(Subfield(code="b", value=data.subtitle))
 
     if data.title_part:
-        subfields[-1] = f"{subfields[-1]}. "
-        subfields.extend(["p", data.title_part])
+        title_subfields.append(Subfield(code="p", value=data.title_part))
 
         # add 246 tag
         ind2 = check_article(data.title_part)
-        tags.append(
+        record.add_ordered_field(
             Field(
                 tag="246",
                 indicators=["1", ind2],
-                subfields=["a", data.title_part[int(ind2) :]],
+                subfields=[
+                    Subfield(code="a", value=data.title_part[int(ind2) :])  # noqa: E203
+                ],
             )
         )
 
     if data.author:
-        subfields[-1] = f"{subfields[-1]} / "
-        subfields.extend(["c", data.author])
+        title_subfields.append(Subfield(code="c", value=data.author))
 
-    ind2 = check_article(data.title)
+    title_ind2 = check_article(data.title)
 
-    tags.append(Field(tag="245", indicators=["0", ind2], subfields=subfields))
+    record.add_ordered_field(
+        Field(tag="245", indicators=["0", title_ind2], subfields=title_subfields)
+    )
 
     # 246 - other title
     for title in data.title_other:
-        tags.append(Field(tag="246", indicators=["1", "3"], subfields=["a", title]))
+        record.add_ordered_field(
+            Field(
+                tag="246",
+                indicators=["1", "3"],
+                subfields=[Subfield(code="a", value=title)],
+            )
+        )
 
     # 264 publication tags
-    subfields = []
     if data.pub_place:
-        subfields.extend(["a", f"{data.pub_place}:"])
+        pub_place = data.pub_place
     else:
-        subfields.extend(["a", "[Place of publication not identified]:"])
+        pub_place = "[Place of publication not identified]"
     if data.publisher:
-        subfields.extend(["b", f"{data.publisher},"])
+        publisher = data.publisher
     else:
-        subfields.extend(["b", "[publisher not identified],"])
+        publisher = "[publisher not identified]"
     if data.pub_date:
-        subfields.extend(["c", data.pub_date])
+        pub_date = data.pub_date
     else:
-        subfields.extend(["c", "[date of publication not identified]"])
+        pub_date = "[date of publication not identified]"
 
-    tags.append(Field(tag="264", indicators=[" ", "1"], subfields=subfields))
+    record.add_ordered_field(
+        Field(
+            tag="264",
+            indicators=[" ", "1"],
+            subfields=[
+                Subfield(code="a", value=pub_place),
+                Subfield(code="b", value=publisher),
+                Subfield(code="c", value=pub_date),
+            ],
+        )
+    )
 
     # 300 tag
-    tags.append(
-        Field(tag="300", indicators=[" ", " "], subfields=["a", "1 board game"])
+    record.add_ordered_field(
+        Field(
+            tag="300",
+            indicators=[" ", " "],
+            subfields=[Subfield(code="a", value="1 board game")],
+        )
     )
 
     # RDA 3xx tags
-    tags.append(
+    record.add_ordered_field(
         Field(
             tag="336",
             indicators=[" ", " "],
-            subfields=["a", "three-dimensional form", "b", "tdf", "2", "rdacontent"],
+            subfields=[
+                Subfield(code="a", value="three-dimensional form"),
+                Subfield(code="b", value="tdf"),
+                Subfield(code="2", value="rdacontent"),
+            ],
         )
     )
-    tags.append(
+    record.add_ordered_field(
         Field(
             tag="337",
             indicators=[" ", " "],
-            subfields=["a", "unmediated", "b", "n", "2", "rdamedia"],
+            subfields=[
+                Subfield(code="a", value="unmediated"),
+                Subfield(code="b", value="n"),
+                Subfield(code="2", value="rdamedia"),
+            ],
         )
     )
-    tags.append(
+    record.add_ordered_field(
         Field(
             tag="338",
             indicators=[" ", " "],
-            subfields=["a", "object", "b", "nr", "2", "rdacarrier"],
+            subfields=[
+                Subfield(code="a", value="object"),
+                Subfield(code="b", value="nr"),
+                Subfield(code="2", value="rdacarrier"),
+            ],
         )
     )
 
     # 500 notes
-    tags.append(
+    record.add_ordered_field(
         Field(
             tag="500",
             indicators=[" ", " "],
-            subfields=["a", f"Number of players: {data.players}"],
+            subfields=[Subfield(code="a", value=f"Number of players: {data.players}")],
         )
     )
 
-    tags.append(
+    record.add_ordered_field(
         Field(
             tag="500",
             indicators=[" ", " "],
-            subfields=["a", f"Game duration: {data.duration}"],
+            subfields=[Subfield(code="a", value=f"Game duration: {data.duration}")],
         )
     )
 
     # content note 505
     if data.content:
-        tags.append(
-            Field(tag="505", indicators=["0", " "], subfields=["a", data.content])
+        record.add_ordered_field(
+            Field(
+                tag="505",
+                indicators=["0", " "],
+                subfields=[Subfield(code="a", value=data.content)],
+            )
         )
 
     # 520 summary
     if data.desc:
-        if data.desc[-1].isalnum():
-            desc = f"{data.desc}."
-        else:
+        if data.desc.endswith("."):
             desc = data.desc
-        tags.append(Field(tag="520", indicators=[" ", " "], subfields=["a", desc]))
+        else:
+            desc = f"{data.desc}."
+        record.add_ordered_field(
+            Field(
+                tag="520",
+                indicators=[" ", " "],
+                subfields=[Subfield(code="a", value=desc)],
+            )
+        )
 
     # 521 note
-    tags.append(Field(tag="521", indicators=[" ", " "], subfields=["a", data.age]))
+    record.add_ordered_field(
+        Field(
+            tag="521",
+            indicators=[" ", " "],
+            subfields=[Subfield(code="a", value=data.age)],
+        )
+    )
 
     # 655 genre
-    tags.append(
+    record.add_ordered_field(
         Field(
             tag="655",
             indicators=[" ", "7"],
-            subfields=["a", "Board games.", "2", "lcgft"],
+            subfields=[
+                Subfield(code="a", value="Board games."),
+                Subfield(code="2", value="lcgft"),
+            ],
         )
     )
 
     # 856 fields (link to project)
-    tags.append(
+    record.add_ordered_field(
         Field(
             tag="856",
             indicators=["4", " "],
             subfields=[
-                "u",
-                "https://www.bklynlibrary.org/boardgamelibrary",
-                "z",
-                "Board Game Library website",
+                Subfield(
+                    code="u", value="https://www.bklynlibrary.org/boardgamelibrary"
+                ),
+                Subfield(code="z", value="Board Game Library website"),
             ],
         )
     )
@@ -246,46 +310,43 @@ def game_record(data, control_number, suppressed=True, status_code="-"):
     # 960 item field
     for barcode in data.central_barcodes:
         field = create_item_field("02abg", barcode, data.price, status_code)
-        tags.append(field)
+        record.add_ordered_field(field)
 
     for barcode in data.crown_barcodes:
         field = create_item_field("30abg", barcode, data.price, status_code)
-        tags.append(field)
+        record.add_ordered_field(field)
 
     for barcode in data.bushwick_barcodes:
         field = create_item_field("29abg", barcode, data.price, status_code)
-        tags.append(field)
+        record.add_ordered_field(field)
 
     for barcode in data.mckinley_barcodes:
         field = create_item_field("67abg", barcode, data.price, status_code)
-        tags.append(field)
+        record.add_ordered_field(field)
 
     for barcode in data.newutrecht_barcodes:
         field = create_item_field("51abg", barcode, data.price, status_code)
-        tags.append(field)
+        record.add_ordered_field(field)
 
     for barcode in data.windsor_barcodes:
         field = create_item_field("77abg", barcode, data.price, status_code)
-        tags.append(field)
+        record.add_ordered_field(field)
 
     for barcode in data.adams_st_barcodes:
         field = create_item_field("88abg", barcode, data.price, status_code)
-        tags.append(field)
+        record.add_ordered_field(field)
 
     # 949 command line
     if suppressed:
         opac_display_command = "b3=n"
     else:
         opac_display_command = ""
-    tags.append(
+    record.add_ordered_field(
         Field(
             tag="949",
             indicators=[" ", " "],
-            subfields=["a", f"*b2=o;{opac_display_command}"],
+            subfields=[Subfield(code="a", value=f"*b2=o;{opac_display_command}")],
         )
     )
-
-    for tag in tags:
-        record.add_ordered_field(tag)
 
     return record
