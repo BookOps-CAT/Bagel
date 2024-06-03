@@ -10,7 +10,7 @@ def get_metadata():
     # download metadata from google sheet and save it as a csv
     df = pd.read_csv(
         URL,
-        usecols=range(0, 25),
+        usecols=range(0, 26),
         converters={
             "Number of players": str,
             "Recommended age": str,

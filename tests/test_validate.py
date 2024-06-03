@@ -29,6 +29,7 @@ def test_validate_headings():
         "Description/summary",
         "List of components",
         "Email Address",
+        "Adams St. Barcodes",
     ]
     with open("temp/metadata.csv", "r", encoding="utf-8") as csvfile:
         reader = csv.reader(csvfile)

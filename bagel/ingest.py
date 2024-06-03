@@ -29,6 +29,7 @@ Row = namedtuple(
         "desc",
         "content",
         "email",
+        "adams_st_barcodes",
     ],
 )
 
@@ -104,6 +105,7 @@ def form_data_reader():
                 mckinley_barcodes = str2list(row[10])
                 newutrecht_barcodes = str2list(row[11])
                 windsor_barcodes = str2list(row[12])
+                adams_st_barcodes = str2list(row[25])
                 isbns = str2list(row[17])
                 upcs = str2list(row[18])
                 title = remove_white_space_and_trailing_punctuation(
@@ -139,7 +141,8 @@ def form_data_reader():
                     desc=desc,
                     content=content,
                     email=row[24],
+                    adams_st_barcodes=adams_st_barcodes,
                 )
-            except:
+            except Exception:
                 print(f"Encountered a problem in row {n + 1}")
                 raise
