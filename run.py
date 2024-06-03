@@ -1,7 +1,8 @@
 import sys
+import datetime
 
 from bagel.ingest import form_data_reader
-from bagel.produce import game_record, save2marc, generate_controlNo, _date_today
+from bagel.produce import game_record, save2marc, generate_controlNo
 from bagel.download import get_metadata
 from bagel.validate import validate_csv
 
@@ -13,7 +14,7 @@ def run(start_sequence: str) -> None:
     n = int(start_sequence)
 
     # define output file
-    date = _date_today()
+    date = datetime.datetime.strftime(datetime.datetime.now(), "%y%m%d")
     out_file = f"temp/BaGEL-{date}.mrc"
 
     # read rows of data frame, generate controlNos, create bibs, write to MARC
