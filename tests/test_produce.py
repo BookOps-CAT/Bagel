@@ -8,7 +8,6 @@ from bagel.produce import (
     save2marc,
     game_record,
 )
-from bagel.ingest import Row
 
 
 @pytest.mark.parametrize(
@@ -74,38 +73,47 @@ def test_save2marc(tmpdir):
     assert len(record_ids) == 1
 
 
-def test_game_record():
+def test_game_record(stub_row):
     today = datetime.datetime.strftime(datetime.datetime.now(), "%Y%m%d")
-    data = Row(
-        processing="completed",
-        title="Abalone",
-        title_part="",
-        players="2",
-        duration="30 min",
-        age="7+",
-        central_barcodes="",
-        crown_barcodes="34444938440625",
-        bushwick_barcodes="",
-        mckinley_barcodes="",
-        newutrecht_barcodes="",
-        windsor_barcodes="",
-        price="39.99",
-        title_other="",
-        subtitle="",
-        author="Michel Lalet, Laurent Levi",
-        isbn="",
-        upc="",
-        pub_place="",
-        publisher="",
-        pub_date="",
-        desc="Players play in turns moving one, two or three marbles at a time. Three push one, three push two, two push one. When pushing one marble at the end of a row, all marbles will move to the next available space simultaneously. Be the first to force a total of six of the opponents marbles off the board. (From back of box)",  # noqa: E501
-        content="1 gameboard, 14 white marbles, 14 black marbles, rulebook",
-        email="",
-        adams_st_barcodes="",
-    )
     rec = game_record(
-        data, control_number="bkl-bgm-0000001", suppressed=False, status_code="g"
+        stub_row, control_number="bkl-bgm-0000001", suppressed=False, status_code="g"
     )
     assert isinstance(rec, Record)
     assert rec.leader == "00000crm a2200000M  4500"
     assert today in rec["005"].data
+
+
+def test_game_record_missing_pub_data(stub_row):
+    stub_row = stub_row._replace(
+        pub_place="",
+        publisher="",
+        pub_date="",
+    )
+    rec = game_record(
+        stub_row, control_number="bkl-bgm-0000001", suppressed=False, status_code="g"
+    )
+    assert "[Place of publication not identified] : " in rec["264"].value()
+    assert "[publisher not identified], " in rec["264"].value()
+    assert "[date of publication not identified]" in rec["264"].value()
+
+
+def test_game_record_missing_title(stub_row):
+    with pytest.raises(ValueError) as exc:
+        stub_row = stub_row._replace(
+            processing="completed",
+            title=None,
+        )
+        game_record(
+            stub_row,
+            control_number="bkl-bgm-0000001",
+            suppressed=False,
+            status_code="g",
+        )
+    assert "Missing title data" in str(exc.value)
+
+
+def test_game_record_unsuppressed(stub_row):
+    rec = game_record(
+        stub_row, control_number="bkl-bgm-0000001", suppressed=True, status_code="g"
+    )
+    assert "b3=n" in rec["949"].value()

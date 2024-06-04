@@ -9,8 +9,10 @@ from bagel.validate import validate_csv
 
 def run(start_sequence: str) -> None:
     # retrieve data, validate csv and timestamps, identify start of sequence
-    get_metadata()
-    validate_csv()
+    csvfile = get_metadata("temp/metadata.csv")
+    valid_file = validate_csv(csvfile)
+    if valid_file is False:
+        exit()
     n = int(start_sequence)
 
     # define output file
@@ -18,7 +20,7 @@ def run(start_sequence: str) -> None:
     out_file = f"temp/BaGEL-{date}.mrc"
 
     # read rows of data frame, generate controlNos, create bibs, write to MARC
-    for data in form_data_reader():
+    for data in form_data_reader(csvfile):
         if data.processing == "awaiting":
             controlNo = generate_controlNo(n)
             print(controlNo)

@@ -125,10 +125,10 @@ def game_record(data, control_number, suppressed=True, status_code="-"):
         title_subfields.append(Subfield(code="a", value=data.title))
 
     if data.subtitle:
-        title_subfields.append(Subfield(code="b", value=data.subtitle))
+        title_subfields.append(Subfield(code="b", value=f" :{data.subtitle}"))
 
     if data.title_part:
-        title_subfields.append(Subfield(code="p", value=data.title_part))
+        title_subfields.append(Subfield(code="p", value=f". {data.title_part}"))
 
         # add 246 tag
         ind2 = check_article(data.title_part)
@@ -143,7 +143,7 @@ def game_record(data, control_number, suppressed=True, status_code="-"):
         )
 
     if data.author:
-        title_subfields.append(Subfield(code="c", value=data.author))
+        title_subfields.append(Subfield(code="c", value=f" /{data.author}"))
 
     title_ind2 = check_article(data.title)
 
@@ -165,11 +165,11 @@ def game_record(data, control_number, suppressed=True, status_code="-"):
     if data.pub_place:
         pub_place = data.pub_place
     else:
-        pub_place = "[Place of publication not identified]"
+        pub_place = "[Place of publication not identified] : "
     if data.publisher:
         publisher = data.publisher
     else:
-        publisher = "[publisher not identified]"
+        publisher = "[publisher not identified], "
     if data.pub_date:
         pub_date = data.pub_date
     else:
@@ -260,15 +260,11 @@ def game_record(data, control_number, suppressed=True, status_code="-"):
 
     # 520 summary
     if data.desc:
-        if data.desc.endswith("."):
-            desc = data.desc
-        else:
-            desc = f"{data.desc}."
         record.add_ordered_field(
             Field(
                 tag="520",
                 indicators=[" ", " "],
-                subfields=[Subfield(code="a", value=desc)],
+                subfields=[Subfield(code="a", value=f"{data.desc}.")],
             )
         )
 
@@ -337,7 +333,7 @@ def game_record(data, control_number, suppressed=True, status_code="-"):
         record.add_ordered_field(field)
 
     # 949 command line
-    if suppressed:
+    if suppressed is True:
         opac_display_command = "b3=n"
     else:
         opac_display_command = ""
