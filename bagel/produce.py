@@ -1,4 +1,4 @@
-from datetime import date, datetime
+import datetime
 
 from pymarc import Field, Record, Subfield  # type: ignore
 
@@ -63,11 +63,16 @@ def game_record(data, control_number, suppressed=True, status_code="-"):
 
     # 005
     record.add_ordered_field(
-        Field(tag="005", data=datetime.strftime(datetime.now(), "%Y%m%d%H%M%S.%f"))
+        Field(
+            tag="005",
+            data=datetime.datetime.strftime(
+                datetime.datetime.now(tz=datetime.timezone.utc), "%Y%m%d%H%M%S.%f"
+            ),
+        )
     )
 
     # 008
-    date_created = date.strftime(date.today(), "%y%m%d")
+    date_created = datetime.date.strftime(datetime.date.today(), "%y%m%d")
     if data.pub_date:
         t008 = f"{date_created}s{data.pub_date}    xxu               vneng d"
     else:
