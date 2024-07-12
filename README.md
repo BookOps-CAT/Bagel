@@ -27,7 +27,13 @@
     * `source ./.venv/scripts/activate`
 5. Run the following Python command in terminal (the next control # in the example is 20)
     * `python run.py 20`
-6. Review and validate produced records in MarcEdit (optional)
-7. Load to Sierra using local (I) Load Overload New (insert or overlay) 
-8. Mark processed rows as "completed"
-9. Add loaded dates, new control #s and Sierra bib IDs to sheet
+6. Review and validate records in MarcEdit
+7. Import records into Sierra 
+    * Use the Data Exchange module and the "Local Records via Local Profiles (local)" process
+    * Upload records using "Get PC" and select `.ltfs` as the accepted suffix for the records
+    * Select the file you just uploaded and click "Prep"
+    * Select the file that was just created (it shold have the suffix `.lmarc`) and click "Load"
+    * Select (I) Load Overload New (insert or overlay) MARC file
+    * Run a test to ensure the records do not contain and errors and then click "Load"
+8.  Mark processed rows as "completed"
+9.  Add loaded dates, new control #s and Sierra bib IDs to sheet
