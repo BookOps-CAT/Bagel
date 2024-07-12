@@ -1,5 +1,5 @@
 import csv
-from datetime import datetime
+import datetime
 
 
 def validate_headings(file: str) -> bool:
@@ -61,7 +61,7 @@ def validate_timestamps(file: str) -> bool:
         next(reader)
         for n, row in enumerate(reader):
             try:
-                datetime.strptime(row[0], "%m/%d/%Y %H:%M:%S")
+                datetime.datetime.strptime(row[0], "%m/%d/%Y %H:%M:%S")
                 valid = True
             except ValueError:
                 print(f"Invalid timestamp in row {n + 1}. Check csv and rerun script.")
