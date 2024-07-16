@@ -29,11 +29,11 @@
     * `python run.py 20`
 6. Review and validate records in MarcEdit
 7. Import records into Sierra 
-    * Use the Data Exchange module and the "Local Records via Local Profiles (local)" process
-    * Upload records using "Get PC" and select `.ltfs` as the accepted suffix for the records
-    * Select the file you just uploaded and click "Prep"
-    * Select the file that was just created (it shold have the suffix `.lmarc`) and click "Load"
-    * Select (I) Load Overload New (insert or overlay) MARC file
+    * Open the Data Exchange module and select "Load Records via Local Profiles (local)" from the drop down menu
+    * Upload records using the "Get PC" option, select the `.mrc` file you just created and `.lfts` as the accepted suffix for the records
+    * Find the file you just uploaded and click "Prep"
+    * A new file with the same filename and the suffix `.lmarc` should now be in the file list. Select that file and click "Load"
+    * Select "(I) Load Overload New (insert or overlay) MARC file"
     * Run a test to ensure the records do not contain and errors and then click "Load"
 8.  Mark processed rows as "completed"
 9.  Add loaded dates, new control #s and Sierra bib IDs to sheet
