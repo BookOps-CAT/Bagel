@@ -1,0 +1,22 @@
+[tool.poetry]
+name = "bagel"
+version = "0.1.0"
+description = "Scripts for ingesting data & producing MARC21 records for BPL Board Game Library"
+authors = ["Your Name <you@example.com>"]
+license = "MIT"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+pymarc = "^5.2.3"
+pandas = "^2.2.3"
+pandas-stubs = "^2.2.3.241126"
+
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.3.4"
+pytest-cov = "^6.0.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
