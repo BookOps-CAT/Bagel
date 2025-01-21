@@ -74,7 +74,9 @@ def test_save2marc(tmpdir):
 
 
 def test_game_record(stub_row):
-    today = datetime.datetime.strftime(datetime.datetime.now(), "%Y%m%d")
+    today = datetime.datetime.strftime(
+        datetime.datetime.now(tz=datetime.timezone.utc), "%Y%m%d"
+    )
     rec = game_record(
         stub_row, control_number="bkl-bgm-0000001", suppressed=False, status_code="g"
     )
@@ -92,9 +94,43 @@ def test_game_record_missing_pub_data(stub_row):
     rec = game_record(
         stub_row, control_number="bkl-bgm-0000001", suppressed=False, status_code="g"
     )
-    assert "[Place of publication not identified] : " in rec["264"].value()
+    assert "[Place of publication not identified]: " in rec["264"].value()
     assert "[publisher not identified], " in rec["264"].value()
     assert "[date of publication not identified]" in rec["264"].value()
+
+
+@pytest.mark.parametrize(
+    "pub_place, publisher, pub_date, expected",
+    [
+        ("Foo", "Bar", "2025", "Foo: Bar, 2025"),
+        (
+            "Foo",
+            None,
+            None,
+            "Foo: [publisher not identified], [date of publication not identified]",
+        ),
+        ("Foo", "Bar", None, "Foo: Bar, [date of publication not identified]"),
+        ("Foo", None, "2025", "Foo: [publisher not identified], 2025"),
+        (
+            None,
+            None,
+            None,
+            "[Place of publication not identified]: [publisher not identified], [date of publication not identified]",  # noqa: E501
+        ),
+    ],
+)
+def test_game_record_pub_data_variants(
+    stub_row, pub_place, publisher, pub_date, expected
+):
+    stub_row = stub_row._replace(
+        pub_place=pub_place,
+        publisher=publisher,
+        pub_date=pub_date,
+    )
+    rec = game_record(
+        stub_row, control_number="bkl-bgm-0000001", suppressed=True, status_code="g"
+    )
+    assert expected in rec["264"].value()
 
 
 def test_game_record_missing_title(stub_row):
@@ -110,6 +146,32 @@ def test_game_record_missing_title(stub_row):
             status_code="g",
         )
     assert "Missing title data" in str(exc.value)
+
+
+@pytest.mark.parametrize(
+    "title, subtitle, author, expected_str, expected_bytes",
+    [
+        ("Foo", "bar", "baz", "Foo: bar/ baz", "00\x1faFoo:\x1fbbar/\x1fcbaz\x1e"),
+        ("Foo", None, None, "Foo", "00\x1faFoo\x1e"),
+        ("Foo", "bar", None, "Foo: bar", "00\x1faFoo:\x1fbbar\x1e"),
+        ("Foo", None, "baz", "Foo/ baz", "00\x1faFoo/\x1fcbaz\x1e"),
+    ],
+)
+def test_game_record_title_variants(
+    stub_row, title, subtitle, author, expected_str, expected_bytes
+):
+    stub_row = stub_row._replace(
+        title=title,
+        subtitle=subtitle,
+        author=author,
+    )
+    rec = game_record(
+        stub_row, control_number="bkl-bgm-0000001", suppressed=True, status_code="g"
+    )
+    assert expected_str in rec["245"].value()
+    assert rec["245"].as_marc21(encoding="utf-8") == bytes(
+        expected_bytes, encoding="utf-8"
+    )
 
 
 def test_game_record_unsuppressed(stub_row):

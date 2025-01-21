@@ -7,6 +7,8 @@
 
 ## Setup
  This project requires Python 3.12.
+
+ #### Install using pip
  1. Clone repository
  2. Navigate to project directory in terminal (examples assume commands are run in bash)
     * `cd Bagel`
@@ -16,6 +18,13 @@
     * `source ./.venv/scripts/activate`
  5. Install dependencies
     * `pip install -r requirements.txt`
+
+ #### Install using poetry
+ 1. Clone repository
+ 2. Navigate to project directory in terminal (examples assume commands are run in bash)
+    * `cd Bagel`
+ 3. Create virtual environment and install dependencies
+    * `poetry install`
 
 ## Steps
 0. Review submitted descriptions in data submission sheet

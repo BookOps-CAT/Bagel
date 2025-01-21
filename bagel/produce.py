@@ -1,6 +1,6 @@
 import datetime
 
-from pymarc import Field, Record, Subfield  # type: ignore
+from pymarc import Field, Record, Subfield
 
 
 def create_item_field(shelfcode, barcode, price, status_code):
@@ -54,6 +54,7 @@ def game_record(data, control_number, suppressed=True, status_code="-"):
     returns:
         record: pymarc.Record object
     """
+    today = datetime.datetime.now(tz=datetime.timezone.utc)
 
     record = Record()
     record.leader = "00000crm a2200000M  4500"
@@ -65,14 +66,12 @@ def game_record(data, control_number, suppressed=True, status_code="-"):
     record.add_ordered_field(
         Field(
             tag="005",
-            data=datetime.datetime.strftime(
-                datetime.datetime.now(tz=datetime.timezone.utc), "%Y%m%d%H%M%S.%f"
-            ),
+            data=datetime.datetime.strftime(today, "%Y%m%d%H%M%S.%f"),
         )
     )
 
     # 008
-    date_created = datetime.date.strftime(datetime.date.today(), "%y%m%d")
+    date_created = datetime.date.strftime(today, "%y%m%d")
     if data.pub_date:
         t008 = f"{date_created}s{data.pub_date}    xxu               vneng d"
     else:
@@ -123,35 +122,17 @@ def game_record(data, control_number, suppressed=True, status_code="-"):
     )
 
     # 245 (no final puctuation neeeded per new PCC ISBD policy)
-    title_subfields = []
     if not data.title:
         raise ValueError("Missing title data")
-    else:
-        title_subfields.append(Subfield(code="a", value=data.title))
-
+    title = {"a": data.title, "b": data.subtitle, "c": data.author}
     if data.subtitle:
-        title_subfields.append(Subfield(code="b", value=f" :{data.subtitle}"))
-
-    if data.title_part:
-        title_subfields.append(Subfield(code="p", value=f". {data.title_part}"))
-
-        # add 246 tag
-        ind2 = check_article(data.title_part)
-        record.add_ordered_field(
-            Field(
-                tag="246",
-                indicators=["1", ind2],
-                subfields=[
-                    Subfield(code="a", value=data.title_part[int(ind2) :])  # noqa: E203
-                ],
-            )
-        )
-
-    if data.author:
-        title_subfields.append(Subfield(code="c", value=f" /{data.author}"))
-
+        title["a"] = f"{title['a']}:"
+    if data.subtitle and data.author:
+        title["b"] = f"{title['b']}/"
+    if data.author and not data.subtitle:
+        title["a"] = f"{title['a']}/"
     title_ind2 = check_article(data.title)
-
+    title_subfields = [Subfield(code=k, value=v) for k, v in title.items() if v]
     record.add_ordered_field(
         Field(tag="245", indicators=["0", title_ind2], subfields=title_subfields)
     )
@@ -167,31 +148,19 @@ def game_record(data, control_number, suppressed=True, status_code="-"):
         )
 
     # 264 publication tags
-    if data.pub_place:
-        pub_place = data.pub_place
-    else:
-        pub_place = "[Place of publication not identified] : "
-    if data.publisher:
-        publisher = data.publisher
-    else:
-        publisher = "[publisher not identified], "
-    if data.pub_date:
-        pub_date = data.pub_date
-    else:
-        pub_date = "[date of publication not identified]"
-
+    pub_place = (
+        data.pub_place if data.pub_place else "[Place of publication not identified]"
+    )
+    publisher = data.publisher if data.publisher else "[publisher not identified]"
+    date = data.pub_date if data.pub_date else "[date of publication not identified]"
+    pub_data = {"a": f"{pub_place}:", "b": f"{publisher},", "c": f"{date}"}
     record.add_ordered_field(
         Field(
             tag="264",
             indicators=[" ", "1"],
-            subfields=[
-                Subfield(code="a", value=pub_place),
-                Subfield(code="b", value=publisher),
-                Subfield(code="c", value=pub_date),
-            ],
+            subfields=[Subfield(code=k, value=v) for k, v in pub_data.items()],
         )
     )
-
     # 300 tag
     record.add_ordered_field(
         Field(
