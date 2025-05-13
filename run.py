@@ -1,9 +1,10 @@
-import sys
 import datetime
+import os
+import sys
 
-from bagel.ingest import form_data_reader
-from bagel.produce import game_record, save2marc, generate_controlNo
 from bagel.download import get_metadata
+from bagel.ingest import form_data_reader
+from bagel.produce import game_record, generate_controlNo, save2marc
 from bagel.validate import validate_csv
 
 
@@ -17,7 +18,11 @@ def run(start_sequence: str) -> None:
 
     # define output file
     date = datetime.datetime.strftime(datetime.datetime.now(), "%y%m%d")
-    out_file = f"temp/BaGEL-{date}.mrc"
+    suffix = 1
+    out_file = f"temp/BaGEL-{date}-{suffix:02d}.mrc"
+    while os.path.exists(out_file) and os.stat(out_file).st_size > 0:
+        suffix += 1
+        out_file = f"temp/BaGEL-{date}-{suffix:02d}.mrc"
 
     # read rows of data frame, generate controlNos, create bibs, write to MARC
     for data in form_data_reader(csvfile):

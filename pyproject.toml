@@ -1,16 +1,17 @@
-[tool.poetry]
+[project]
 name = "bagel"
 version = "0.1.0"
 description = "Scripts for ingesting data & producing MARC21 records for BPL Board Game Library"
-authors = ["Your Name <you@example.com>"]
+authors = [
+    {name = "Tomasz Kalata",email = "klingaroo@gmail.com"},
+    {name = "Charlotte Kostelic",email = "charlottekostelic@bookops.org"}
+]
 license = "MIT"
 readme = "README.md"
-
-[tool.poetry.dependencies]
-python = "^3.12"
-pymarc = "^5.2.3"
-pandas = "^2.2.3"
-pandas-stubs = "^2.2.3.241126"
+requires-python = ">=3.12, <4.0"
+dependencies = [
+    "pymarc (>=5.2.3,<6.0.0)", "pandas (>=2.2.3,<3.0.0)", "pandas-stubs (>=2.2.3.241126,<3.0.0)",
+]
 
 
 [tool.poetry.group.dev.dependencies]
