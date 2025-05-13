@@ -20,7 +20,7 @@ def run(start_sequence: str) -> None:
     date = datetime.datetime.strftime(datetime.datetime.now(), "%y%m%d")
     suffix = 1
     out_file = f"temp/BaGEL-{date}-{suffix:02d}.mrc"
-    while os.path.exists(out_file):
+    while os.path.exists(out_file) and os.stat(out_file).st_size > 0:
         suffix += 1
         out_file = f"temp/BaGEL-{date}-{suffix:02d}.mrc"
 
