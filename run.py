@@ -1,9 +1,9 @@
-import sys
 import datetime
+import sys
 
-from bagel.ingest import form_data_reader
-from bagel.produce import game_record, save2marc, generate_controlNo
 from bagel.download import get_metadata
+from bagel.ingest import form_data_reader
+from bagel.produce import game_record, generate_controlNo, save2marc
 from bagel.validate import validate_csv
 
 
