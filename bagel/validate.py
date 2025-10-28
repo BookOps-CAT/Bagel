@@ -37,6 +37,7 @@ def validate_headings(file: str) -> bool:
         "List of components",
         "Email Address",
         "Adams St. Barcodes",
+        "Greenpoint Barcodes",
     ]
     with open(file, "r", encoding="utf-8") as csvfile:
         reader = csv.reader(csvfile)

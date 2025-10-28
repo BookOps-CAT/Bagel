@@ -1,6 +1,5 @@
 import pandas as pd
 
-
 SHEET = "https://docs.google.com/spreadsheets/d/"
 SHEET_ID = "1Z8kWlHZXbnzP7OQWK3nLy7DEdxedPv2pW2pYodh6_dY"
 SHEET_NAME = "Form Responses 1".replace(" ", "%20")
@@ -18,7 +17,7 @@ def get_metadata(outfile: str) -> str:
     """
     df = pd.read_csv(
         URL,
-        usecols=range(0, 26),
+        usecols=range(0, 27),
         converters={
             "Number of players": lambda x: str(x),
             "Recommended age": lambda x: str(x),

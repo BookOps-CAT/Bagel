@@ -1,4 +1,5 @@
 import csv
+
 from bagel.download import get_metadata
 
 
@@ -34,5 +35,6 @@ def test_get_metadata(tmpdir):
             "List of components",
             "Email Address",
             "Adams St. Barcodes",
+            "Greenpoint Barcodes",
         ]
     )
