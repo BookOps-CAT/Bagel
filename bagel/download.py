@@ -31,6 +31,8 @@ def get_metadata(outfile: str) -> str:
             "ISBN": lambda x: str(x),
             "UPC": lambda x: str(x),
             "Description/summary": lambda x: x.replace("\n", " "),
+            "Adams St. Barcodes": lambda x: str(x),
+            "Greenpoint Barcodes": lambda x: str(x),
         },
     )
     df.to_csv(outfile, index=False)

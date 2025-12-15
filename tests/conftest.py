@@ -1,4 +1,5 @@
 import pytest
+
 from bagel.ingest import Row
 
 
@@ -30,4 +31,5 @@ def stub_row() -> Row:
         content="1 gameboard",
         email="foobar@email.com",
         adams_st_barcodes="34444666666666",
+        greenpoint_barcodes="34444777777777",
     )
