@@ -1,6 +1,6 @@
 import csv
-from typing import Generator
 from collections import namedtuple
+from typing import Generator
 
 Row = namedtuple(
     "Row",
@@ -30,6 +30,7 @@ Row = namedtuple(
         "content",
         "email",
         "adams_st_barcodes",
+        "greenpoint_barcodes",
     ],
 )
 
@@ -77,6 +78,7 @@ def form_data_reader(file: str) -> Generator:
             newutrecht_barcodes = str2list(row[11])
             windsor_barcodes = str2list(row[12])
             adams_st_barcodes = str2list(row[25])
+            greenpoint_barcodes = str2list(row[26])
             isbns = str2list(row[17])
             upcs = str2list(row[18])
             title = trim_string(row[2])
@@ -111,4 +113,5 @@ def form_data_reader(file: str) -> Generator:
                 content=content,
                 email=row[24],
                 adams_st_barcodes=adams_st_barcodes,
+                greenpoint_barcodes=greenpoint_barcodes,
             )

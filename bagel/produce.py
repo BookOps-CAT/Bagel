@@ -306,6 +306,10 @@ def game_record(data, control_number, suppressed=True, status_code="-"):
         field = create_item_field("88abg", barcode, data.price, status_code)
         record.add_ordered_field(field)
 
+    for barcode in data.greenpoint_barcodes:
+        field = create_item_field("41abg", barcode, data.price, status_code)
+        record.add_ordered_field(field)
+
     # 949 command line
     if suppressed is True:
         opac_display_command = "b3=n"
