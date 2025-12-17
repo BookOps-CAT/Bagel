@@ -66,7 +66,7 @@ def game_record(data, control_number, suppressed=True, status_code="-"):
     record.add_ordered_field(
         Field(
             tag="005",
-            data=datetime.datetime.strftime(today, "%Y%m%d%H%M%S.%f"),
+            data=datetime.datetime.strftime(today, "%Y%m%d%H%M%S.0"),
         )
     )
 

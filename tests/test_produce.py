@@ -1,12 +1,14 @@
 import datetime
+
 import pytest
-from pymarc import Record, Field, Subfield, MARCReader
+from pymarc import Field, MARCReader, Record, Subfield
+
 from bagel.produce import (
-    create_item_field,
-    generate_controlNo,
     check_article,
-    save2marc,
+    create_item_field,
     game_record,
+    generate_controlNo,
+    save2marc,
 )
 
 
@@ -83,6 +85,7 @@ def test_game_record(stub_row):
     assert isinstance(rec, Record)
     assert rec.leader == "00000crm a2200000M  4500"
     assert today in rec["005"].data
+    assert len(rec["005"].data.split(".")[1]) == 1
 
 
 def test_game_record_missing_pub_data(stub_row):
