@@ -8,15 +8,20 @@ authors = [
 ]
 license = "MIT"
 readme = "README.md"
-requires-python = ">=3.12, <4.0"
+requires-python = ">=3.12"
 dependencies = [
-    "pymarc (>=5.2.3,<6.0.0)", "pandas (>=2.2.3,<3.0.0)", "pandas-stubs (>=2.2.3.241126,<3.0.0)",
+    "pymarc (>=5.2.3)", "pandas (>=2.2.3)", "pandas-stubs (>=2.2.3.241126)",
 ]
 
+[dependency-groups]
+dev = [
+    "pytest>=8.3.4",
+    "pytest-cov>=6.0.0"
+]
 
-[tool.poetry.group.dev.dependencies]
-pytest = "^8.3.4"
-pytest-cov = "^6.0.0"
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = '--cov=bagel/'
 
 [build-system]
 requires = ["poetry-core"]
