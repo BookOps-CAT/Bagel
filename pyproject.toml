@@ -10,13 +10,13 @@ license = "MIT"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
-    "pymarc (>=5.2.3)", "pandas (>=2.2.3)", "pandas-stubs (>=2.2.3.241126)",
+    "pymarc (>=5.3)", "pandas (>=3.0)", "pandas-stubs (>=2.2.3.241126)",
 ]
 
 [dependency-groups]
 dev = [
-    "pytest>=8.3.4",
-    "pytest-cov>=6.0.0"
+    "pytest>=9.0.3",
+    "pytest-cov>=7.0.0"
 ]
 
 [tool.pytest.ini_options]
