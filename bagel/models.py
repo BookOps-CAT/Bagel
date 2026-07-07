@@ -1,33 +1,31 @@
-from collections import namedtuple
+from dataclasses import dataclass
 
-Row = namedtuple(
-    "Row",
-    [
-        "processing",
-        "title",
-        "title_part",
-        "players",
-        "duration",
-        "age",
-        "central_barcodes",
-        "crown_barcodes",
-        "bushwick_barcodes",
-        "mckinley_barcodes",
-        "newutrecht_barcodes",
-        "windsor_barcodes",
-        "price",
-        "title_other",
-        "subtitle",
-        "author",
-        "isbn",
-        "upc",
-        "pub_place",
-        "publisher",
-        "pub_date",
-        "desc",
-        "content",
-        "email",
-        "adams_st_barcodes",
-        "greenpoint_barcodes",
-    ],
-)
+
+@dataclass
+class Row:
+    processing: str
+    title: str
+    title_part: str
+    players: str
+    duration: str
+    age: str
+    central_barcodes: list[str]
+    crown_barcodes: list[str]
+    bushwick_barcodes: list[str]
+    mckinley_barcodes: list[str]
+    newutrecht_barcodes: list[str]
+    windsor_barcodes: list[str]
+    price: str
+    title_other: list[str]
+    subtitle: str
+    author: str
+    isbn: str
+    upc: str
+    pub_place: str
+    publisher: str
+    pub_date: str
+    desc: str
+    content: str
+    email: str
+    adams_st_barcodes: list[str]
+    greenpoint_barcodes: list[str]
