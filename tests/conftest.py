@@ -33,3 +33,27 @@ def stub_row() -> Row:
         adams_st_barcodes="34444666666666",
         greenpoint_barcodes="34444777777777",
     )
+
+
+@pytest.fixture
+def mock_valid_metadata(mocker) -> None:
+    data = """Timestamp,Processing,Title proper,Name of part / expansion,Number of players,Game duration,Recommended age,Central Library Barcodes,Crown Heights Barcodes,Bushwick Barcodes,McKinley Park Barcodes,New Utrecht Barcodes,Windsor Terrace Barcodes,Price,Other titles,Subtitle,Authors/designers,ISBN,UPC,Place of publication,Publisher,Date of publication,Description/summary,List of components,Email Address,Adams St. Barcodes,Greenpoint Barcodes\n1/1/2020 01:01:30,completed,Board Game 1,,2,30 mins,7+,,34444111111111,,,,,1.99,,,"Foo, Bar",,,,,,"Players play in turns","1 gameboard",fakeemail,,\n1/1/2020 01:02:30,completed,Board Game 2,,2,30 mins,7+,,34444222222222,,,,,1.99,,,"Foo, Bar",,,,,,"Players play in turns","1 gameboard",fakeemail,,\n1/1/2020 01:01:30,completed,Board Game 3,,2,30 mins,7+,,34444333333333,,,,,1.99,,,"Foo, Bar",,,,,,"Players play in turns","1 gameboard",fakeemail,,\n1/1/2020 01:01:30,completed,Board Game 4,,2,30 mins,7+,,34444444444444,,,,,1.99,,,"Foo, Bar",,,,,,"Players play in turns","1 gameboard",fakeemail,,\n1/1/2020 01:01:30,completed,Board Game 5,,2,30 mins,7+,,34444555555555,,,,,1.99,,,"Foo, Bar",,,,,,"Players play in turns","1 gameboard",fakeemail,,"""  # noqa: E501
+    m = mocker.mock_open(read_data=data)
+    mocker.patch("bagel.ingest.open", m)
+    mocker.patch("bagel.validate.open", m)
+
+
+@pytest.fixture
+def mock_invalid_metadata(mocker) -> None:
+    data = "Timestamp,Processing,Title proper\nFoo,Bar,Baz"
+    m = mocker.mock_open(read_data=data)
+    mocker.patch("bagel.ingest.open", m)
+    mocker.patch("bagel.validate.open", m)
+
+
+@pytest.fixture
+def mock_empty_metadata(mocker) -> None:
+    data = """Timestamp,Processing,Title proper,Name of part / expansion,Number of players,Game duration,Recommended age,Central Library Barcodes,Crown Heights Barcodes,Bushwick Barcodes,McKinley Park Barcodes,New Utrecht Barcodes,Windsor Terrace Barcodes,Price,Other titles,Subtitle,Authors/designers,ISBN,UPC,Place of publication,Publisher,Date of publication,Description/summary,List of components,Email Address,Adams St. Barcodes,Greenpoint Barcodes"""  # noqa: E501
+    m = mocker.mock_open(read_data=data)
+    mocker.patch("bagel.ingest.open", m)
+    mocker.patch("bagel.validate.open", m)
