@@ -89,11 +89,7 @@ def test_game_record(stub_row):
 
 
 def test_game_record_missing_pub_data(stub_row):
-    stub_row = stub_row._replace(
-        pub_place="",
-        publisher="",
-        pub_date="",
-    )
+    stub_row = stub_row._replace(pub_place="", publisher="", pub_date="")
     rec = game_record(
         stub_row, control_number="bkl-bgm-0000001", suppressed=False, status_code="g"
     )
@@ -126,9 +122,7 @@ def test_game_record_pub_data_variants(
     stub_row, pub_place, publisher, pub_date, expected
 ):
     stub_row = stub_row._replace(
-        pub_place=pub_place,
-        publisher=publisher,
-        pub_date=pub_date,
+        pub_place=pub_place, publisher=publisher, pub_date=pub_date
     )
     rec = game_record(
         stub_row, control_number="bkl-bgm-0000001", suppressed=True, status_code="g"
@@ -138,10 +132,7 @@ def test_game_record_pub_data_variants(
 
 def test_game_record_missing_title(stub_row):
     with pytest.raises(ValueError) as exc:
-        stub_row = stub_row._replace(
-            processing="completed",
-            title=None,
-        )
+        stub_row = stub_row._replace(processing="completed", title=None)
         game_record(
             stub_row,
             control_number="bkl-bgm-0000001",
@@ -163,11 +154,7 @@ def test_game_record_missing_title(stub_row):
 def test_game_record_title_variants(
     stub_row, title, subtitle, author, expected_str, expected_bytes
 ):
-    stub_row = stub_row._replace(
-        title=title,
-        subtitle=subtitle,
-        author=author,
-    )
+    stub_row = stub_row._replace(title=title, subtitle=subtitle, author=author)
     rec = game_record(
         stub_row, control_number="bkl-bgm-0000001", suppressed=True, status_code="g"
     )
@@ -175,6 +162,22 @@ def test_game_record_title_variants(
     assert rec["245"].as_marc21(encoding="utf-8") == bytes(
         expected_bytes, encoding="utf-8"
     )
+
+
+def test_game_record_missing_content(stub_row):
+    stub_row = stub_row._replace(content="")
+    rec = game_record(
+        stub_row, control_number="bkl-bgm-0000001", suppressed=False, status_code="g"
+    )
+    assert rec.get("505") is None
+
+
+def test_game_record_missing_description(stub_row):
+    stub_row = stub_row._replace(desc="")
+    rec = game_record(
+        stub_row, control_number="bkl-bgm-0000001", suppressed=False, status_code="g"
+    )
+    assert rec.get("520") is None
 
 
 def test_game_record_unsuppressed(stub_row):
