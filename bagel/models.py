@@ -1,0 +1,33 @@
+from collections import namedtuple
+
+Row = namedtuple(
+    "Row",
+    [
+        "processing",
+        "title",
+        "title_part",
+        "players",
+        "duration",
+        "age",
+        "central_barcodes",
+        "crown_barcodes",
+        "bushwick_barcodes",
+        "mckinley_barcodes",
+        "newutrecht_barcodes",
+        "windsor_barcodes",
+        "price",
+        "title_other",
+        "subtitle",
+        "author",
+        "isbn",
+        "upc",
+        "pub_place",
+        "publisher",
+        "pub_date",
+        "desc",
+        "content",
+        "email",
+        "adams_st_barcodes",
+        "greenpoint_barcodes",
+    ],
+)

@@ -1,6 +1,6 @@
 import pytest
 
-from bagel.ingest import Row
+from bagel.models import Row
 
 
 @pytest.fixture

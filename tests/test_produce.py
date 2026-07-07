@@ -83,7 +83,7 @@ def test_game_record(stub_row):
         stub_row, control_number="bkl-bgm-0000001", suppressed=False, status_code="g"
     )
     assert isinstance(rec, Record)
-    assert rec.leader == "00000crm a2200000M  4500"
+    assert str(rec.leader) == "00000crm a2200000M  4500"
     assert today in rec["005"].data
     assert len(rec["005"].data.split(".")[1]) == 1
 

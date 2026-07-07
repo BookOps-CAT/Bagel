@@ -1,38 +1,7 @@
 import csv
-from collections import namedtuple
 from typing import Generator
 
-Row = namedtuple(
-    "Row",
-    [
-        "processing",
-        "title",
-        "title_part",
-        "players",
-        "duration",
-        "age",
-        "central_barcodes",
-        "crown_barcodes",
-        "bushwick_barcodes",
-        "mckinley_barcodes",
-        "newutrecht_barcodes",
-        "windsor_barcodes",
-        "price",
-        "title_other",
-        "subtitle",
-        "author",
-        "isbn",
-        "upc",
-        "pub_place",
-        "publisher",
-        "pub_date",
-        "desc",
-        "content",
-        "email",
-        "adams_st_barcodes",
-        "greenpoint_barcodes",
-    ],
-)
+from bagel.models import Row
 
 
 def trim_string(string: str) -> str:
@@ -45,15 +14,14 @@ def trim_string(string: str) -> str:
             return string[:-1].strip()
         else:
             return string
-    else:
-        return ""
+    return ""
 
 
 def str2list(string: str) -> list:
     return [i.strip() for i in string.split(";") if i.strip() != ""]
 
 
-def form_data_reader(file: str) -> Generator:
+def form_data_reader(file: str) -> Generator[Row, None, None]:
     """
     Parses descripions from a csv file created from google sheet
     linked to submission form
