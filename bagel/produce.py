@@ -318,6 +318,14 @@ def game_record(
         field = create_item_field("41abg", barcode, data.price, status_code)
         record.add_ordered_field(field)
 
+    for barcode in data.dekalb_barcodes:
+        field = create_item_field("35abg", barcode, data.price, status_code)
+        record.add_ordered_field(field)
+
+    for barcode in data.clarendon_barcodes:
+        field = create_item_field("33abg", barcode, data.price, status_code)
+        record.add_ordered_field(field)
+
     # 949 command line
     if suppressed is True:
         opac_display_command = "b3=n"

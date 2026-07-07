@@ -17,7 +17,7 @@ def get_metadata(outfile: str) -> str:
     """
     df = pd.read_csv(
         URL,
-        usecols=range(0, 27),
+        usecols=range(0, 29),
         converters={
             "Number of players": lambda x: str(x),
             "Recommended age": lambda x: str(x),
@@ -33,6 +33,8 @@ def get_metadata(outfile: str) -> str:
             "Description/summary": lambda x: x.replace("\n", " "),
             "Adams St. Barcodes": lambda x: str(x),
             "Greenpoint Barcodes": lambda x: str(x),
+            "Dekalb Barcodes": lambda x: str(x),
+            "Clarendon Barcodes": lambda x: str(x),
         },
     )
     df.to_csv(outfile, index=False)

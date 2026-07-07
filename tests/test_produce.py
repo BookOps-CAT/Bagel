@@ -190,3 +190,22 @@ def test_game_record_unsuppressed(stub_row):
         stub_row, control_number="bkl-bgm-0000001", suppressed=True, status_code="g"
     )
     assert "b3=n" in rec["949"].value()
+
+
+def test_game_record_item_fields(stub_row):
+    rec = game_record(
+        stub_row, control_number="bkl-bgm-0000001", suppressed=False, status_code="g"
+    )
+    item_fields = [i.format_field() for i in rec.get_fields("960")]
+    assert sorted(item_fields) == [
+        "34444000000000 02abg 39.99 11 53 i g",
+        "34444111111111 30abg 39.99 11 53 i g",
+        "34444222222222 29abg 39.99 11 53 i g",
+        "34444333333333 67abg 39.99 11 53 i g",
+        "34444444444444 51abg 39.99 11 53 i g",
+        "34444555555555 77abg 39.99 11 53 i g",
+        "34444666666666 88abg 39.99 11 53 i g",
+        "34444777777777 41abg 39.99 11 53 i g",
+        "34444888888888 35abg 39.99 11 53 i g",
+        "34444999999999 33abg 39.99 11 53 i g",
+    ]

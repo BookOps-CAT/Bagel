@@ -19,8 +19,8 @@ class Row:
     title_other: list[str]
     subtitle: str
     author: str
-    isbn: str
-    upc: str
+    isbn: list[str]
+    upc: list[str]
     pub_place: str
     publisher: str
     pub_date: str
@@ -29,3 +29,5 @@ class Row:
     email: str
     adams_st_barcodes: list[str]
     greenpoint_barcodes: list[str]
+    dekalb_barcodes: list[str]
+    clarendon_barcodes: list[str]

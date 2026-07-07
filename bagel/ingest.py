@@ -17,7 +17,7 @@ def trim_string(string: str) -> str:
     return ""
 
 
-def str2list(string: str) -> list:
+def str2list(string: str) -> list[str]:
     return [i.strip() for i in string.split(";") if i.strip() != ""]
 
 
@@ -47,6 +47,8 @@ def form_data_reader(file: str) -> Generator[Row, None, None]:
             windsor_barcodes = str2list(row[12])
             adams_st_barcodes = str2list(row[25])
             greenpoint_barcodes = str2list(row[26])
+            dekalb_barcodes = str2list(row[27])
+            clarendon_barcodes = str2list(row[28])
             isbns = str2list(row[17])
             upcs = str2list(row[18])
             title = trim_string(row[2])
@@ -82,4 +84,6 @@ def form_data_reader(file: str) -> Generator[Row, None, None]:
                 email=row[24],
                 adams_st_barcodes=adams_st_barcodes,
                 greenpoint_barcodes=greenpoint_barcodes,
+                dekalb_barcodes=dekalb_barcodes,
+                clarendon_barcodes=clarendon_barcodes,
             )
