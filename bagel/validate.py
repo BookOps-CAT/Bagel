@@ -80,8 +80,8 @@ def validate_csv(file: str) -> bool:
     """
     headings = validate_headings(file)
     timestamps = validate_timestamps(file)
-    print("Spreadsheet structure is valid.")
     if headings is True and timestamps is True:
+        print("Spreadsheet structure is valid.")
         return True
     else:
         return False
