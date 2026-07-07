@@ -1,15 +1,19 @@
 import datetime
 
-from pymarc import Field, Record, Subfield
+from pymarc import Field, Indicators, Leader, Record, Subfield
+
+from bagel.models import Row
 
 
-def create_item_field(shelfcode, barcode, price, status_code):
+def create_item_field(
+    shelfcode: str, barcode: str, price: str, status_code: str
+) -> Field:
     """
     Creates item MARC tag subfields
     """
     return Field(
         tag="960",
-        indicators=[" ", " "],
+        indicators=Indicators(" ", " "),
         subfields=[
             Subfield(code="i", value=barcode),
             Subfield(code="l", value=shelfcode),
@@ -22,12 +26,12 @@ def create_item_field(shelfcode, barcode, price, status_code):
     )
 
 
-def generate_controlNo(sequence_no):
-    sequence_no = str(sequence_no).zfill(7)
-    return f"bkl-bgm-{sequence_no}"
+def generate_controlNo(sequence_no: int) -> str:
+    control_no = str(sequence_no).zfill(7)
+    return f"bkl-bgm-{control_no}"
 
 
-def check_article(title):
+def check_article(title: str) -> str:
     # article check
     ind2 = "0"
     if title[:4].lower() == "the ":
@@ -40,13 +44,18 @@ def check_article(title):
     return ind2
 
 
-def save2marc(record, fh_out):
+def save2marc(record: Record, fh_out: str) -> None:
     """Appends MARC21 record to a file"""
     with open(fh_out, "ab") as out:
         out.write(record.as_marc())
 
 
-def game_record(data, control_number, suppressed=True, status_code="-"):
+def game_record(
+    data: Row,
+    control_number: str,
+    suppressed: bool | None = True,
+    status_code: str = "-",
+):
     """
     Creates a record object from data namedtuple
     args:
@@ -57,17 +66,14 @@ def game_record(data, control_number, suppressed=True, status_code="-"):
     today = datetime.datetime.now(tz=datetime.timezone.utc)
 
     record = Record()
-    record.leader = "00000crm a2200000M  4500"
+    record.leader = Leader("00000crm a2200000M  4500")
 
     # 001 - control field
     record.add_ordered_field(Field(tag="001", data=control_number))
 
     # 005
     record.add_ordered_field(
-        Field(
-            tag="005",
-            data=datetime.datetime.strftime(today, "%Y%m%d%H%M%S.0"),
-        )
+        Field(tag="005", data=datetime.datetime.strftime(today, "%Y%m%d%H%M%S.0"))
     )
 
     # 008
@@ -83,7 +89,7 @@ def game_record(data, control_number, suppressed=True, status_code="-"):
         record.add_ordered_field(
             Field(
                 tag="020",
-                indicators=[" ", " "],
+                indicators=Indicators(" ", " "),
                 subfields=[Subfield(code="a", value=isbn)],
             )
         )
@@ -93,7 +99,7 @@ def game_record(data, control_number, suppressed=True, status_code="-"):
         record.add_ordered_field(
             Field(
                 tag="024",
-                indicators=["1", " "],
+                indicators=Indicators("1", " "),
                 subfields=[Subfield(code="a", value=upc)],
             )
         )
@@ -102,7 +108,7 @@ def game_record(data, control_number, suppressed=True, status_code="-"):
     record.add_ordered_field(
         Field(
             tag="040",
-            indicators=[" ", " "],
+            indicators=Indicators(" ", " "),
             subfields=[
                 Subfield(code="a", value="BKL"),
                 Subfield(code="b", value="eng"),
@@ -116,7 +122,7 @@ def game_record(data, control_number, suppressed=True, status_code="-"):
     record.add_ordered_field(
         Field(
             tag="099",
-            indicators=[" ", " "],
+            indicators=Indicators(" ", " "),
             subfields=[Subfield(code="a", value="BOARD GAME")],
         )
     )
@@ -134,16 +140,18 @@ def game_record(data, control_number, suppressed=True, status_code="-"):
     title_ind2 = check_article(data.title)
     title_subfields = [Subfield(code=k, value=v) for k, v in title.items() if v]
     record.add_ordered_field(
-        Field(tag="245", indicators=["0", title_ind2], subfields=title_subfields)
+        Field(
+            tag="245", indicators=Indicators("0", title_ind2), subfields=title_subfields
+        )
     )
 
     # 246 - other title
-    for title in data.title_other:
+    for other_title in data.title_other:
         record.add_ordered_field(
             Field(
                 tag="246",
-                indicators=["1", "3"],
-                subfields=[Subfield(code="a", value=title)],
+                indicators=Indicators("1", "3"),
+                subfields=[Subfield(code="a", value=other_title)],
             )
         )
 
@@ -157,7 +165,7 @@ def game_record(data, control_number, suppressed=True, status_code="-"):
     record.add_ordered_field(
         Field(
             tag="264",
-            indicators=[" ", "1"],
+            indicators=Indicators(" ", "1"),
             subfields=[Subfield(code=k, value=v) for k, v in pub_data.items()],
         )
     )
@@ -165,7 +173,7 @@ def game_record(data, control_number, suppressed=True, status_code="-"):
     record.add_ordered_field(
         Field(
             tag="300",
-            indicators=[" ", " "],
+            indicators=Indicators(" ", " "),
             subfields=[Subfield(code="a", value="1 board game")],
         )
     )
@@ -174,7 +182,7 @@ def game_record(data, control_number, suppressed=True, status_code="-"):
     record.add_ordered_field(
         Field(
             tag="336",
-            indicators=[" ", " "],
+            indicators=Indicators(" ", " "),
             subfields=[
                 Subfield(code="a", value="three-dimensional form"),
                 Subfield(code="b", value="tdf"),
@@ -185,7 +193,7 @@ def game_record(data, control_number, suppressed=True, status_code="-"):
     record.add_ordered_field(
         Field(
             tag="337",
-            indicators=[" ", " "],
+            indicators=Indicators(" ", " "),
             subfields=[
                 Subfield(code="a", value="unmediated"),
                 Subfield(code="b", value="n"),
@@ -196,7 +204,7 @@ def game_record(data, control_number, suppressed=True, status_code="-"):
     record.add_ordered_field(
         Field(
             tag="338",
-            indicators=[" ", " "],
+            indicators=Indicators(" ", " "),
             subfields=[
                 Subfield(code="a", value="object"),
                 Subfield(code="b", value="nr"),
@@ -209,7 +217,7 @@ def game_record(data, control_number, suppressed=True, status_code="-"):
     record.add_ordered_field(
         Field(
             tag="500",
-            indicators=[" ", " "],
+            indicators=Indicators(" ", " "),
             subfields=[Subfield(code="a", value=f"Number of players: {data.players}")],
         )
     )
@@ -217,7 +225,7 @@ def game_record(data, control_number, suppressed=True, status_code="-"):
     record.add_ordered_field(
         Field(
             tag="500",
-            indicators=[" ", " "],
+            indicators=Indicators(" ", " "),
             subfields=[Subfield(code="a", value=f"Game duration: {data.duration}")],
         )
     )
@@ -227,7 +235,7 @@ def game_record(data, control_number, suppressed=True, status_code="-"):
         record.add_ordered_field(
             Field(
                 tag="505",
-                indicators=["0", " "],
+                indicators=Indicators("0", " "),
                 subfields=[Subfield(code="a", value=data.content)],
             )
         )
@@ -237,7 +245,7 @@ def game_record(data, control_number, suppressed=True, status_code="-"):
         record.add_ordered_field(
             Field(
                 tag="520",
-                indicators=[" ", " "],
+                indicators=Indicators(" ", " "),
                 subfields=[Subfield(code="a", value=f"{data.desc}.")],
             )
         )
@@ -246,7 +254,7 @@ def game_record(data, control_number, suppressed=True, status_code="-"):
     record.add_ordered_field(
         Field(
             tag="521",
-            indicators=[" ", " "],
+            indicators=Indicators(" ", " "),
             subfields=[Subfield(code="a", value=data.age)],
         )
     )
@@ -255,7 +263,7 @@ def game_record(data, control_number, suppressed=True, status_code="-"):
     record.add_ordered_field(
         Field(
             tag="655",
-            indicators=[" ", "7"],
+            indicators=Indicators(" ", "7"),
             subfields=[
                 Subfield(code="a", value="Board games."),
                 Subfield(code="2", value="lcgft"),
@@ -267,7 +275,7 @@ def game_record(data, control_number, suppressed=True, status_code="-"):
     record.add_ordered_field(
         Field(
             tag="856",
-            indicators=["4", " "],
+            indicators=Indicators("4", " "),
             subfields=[
                 Subfield(
                     code="u", value="https://www.bklynlibrary.org/boardgamelibrary"
@@ -310,6 +318,14 @@ def game_record(data, control_number, suppressed=True, status_code="-"):
         field = create_item_field("41abg", barcode, data.price, status_code)
         record.add_ordered_field(field)
 
+    for barcode in data.dekalb_barcodes:
+        field = create_item_field("35abg", barcode, data.price, status_code)
+        record.add_ordered_field(field)
+
+    for barcode in data.clarendon_barcodes:
+        field = create_item_field("33abg", barcode, data.price, status_code)
+        record.add_ordered_field(field)
+
     # 949 command line
     if suppressed is True:
         opac_display_command = "b3=n"
@@ -318,7 +334,7 @@ def game_record(data, control_number, suppressed=True, status_code="-"):
     record.add_ordered_field(
         Field(
             tag="949",
-            indicators=[" ", " "],
+            indicators=Indicators(" ", " "),
             subfields=[Subfield(code="a", value=f"*b2=o;{opac_display_command}")],
         )
     )

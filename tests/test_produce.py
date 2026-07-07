@@ -83,13 +83,15 @@ def test_game_record(stub_row):
         stub_row, control_number="bkl-bgm-0000001", suppressed=False, status_code="g"
     )
     assert isinstance(rec, Record)
-    assert rec.leader == "00000crm a2200000M  4500"
+    assert str(rec.leader) == "00000crm a2200000M  4500"
     assert today in rec["005"].data
     assert len(rec["005"].data.split(".")[1]) == 1
 
 
 def test_game_record_missing_pub_data(stub_row):
-    stub_row = stub_row._replace(pub_place="", publisher="", pub_date="")
+    stub_row.pub_place = ""
+    stub_row.publisher = ""
+    stub_row.pub_date = ""
     rec = game_record(
         stub_row, control_number="bkl-bgm-0000001", suppressed=False, status_code="g"
     )
@@ -121,9 +123,9 @@ def test_game_record_missing_pub_data(stub_row):
 def test_game_record_pub_data_variants(
     stub_row, pub_place, publisher, pub_date, expected
 ):
-    stub_row = stub_row._replace(
-        pub_place=pub_place, publisher=publisher, pub_date=pub_date
-    )
+    stub_row.pub_place = pub_place
+    stub_row.publisher = publisher
+    stub_row.pub_date = pub_date
     rec = game_record(
         stub_row, control_number="bkl-bgm-0000001", suppressed=True, status_code="g"
     )
@@ -132,7 +134,8 @@ def test_game_record_pub_data_variants(
 
 def test_game_record_missing_title(stub_row):
     with pytest.raises(ValueError) as exc:
-        stub_row = stub_row._replace(processing="completed", title=None)
+        stub_row.processing = "completed"
+        stub_row.title = None
         game_record(
             stub_row,
             control_number="bkl-bgm-0000001",
@@ -154,7 +157,9 @@ def test_game_record_missing_title(stub_row):
 def test_game_record_title_variants(
     stub_row, title, subtitle, author, expected_str, expected_bytes
 ):
-    stub_row = stub_row._replace(title=title, subtitle=subtitle, author=author)
+    stub_row.title = title
+    stub_row.subtitle = subtitle
+    stub_row.author = author
     rec = game_record(
         stub_row, control_number="bkl-bgm-0000001", suppressed=True, status_code="g"
     )
@@ -165,7 +170,7 @@ def test_game_record_title_variants(
 
 
 def test_game_record_missing_content(stub_row):
-    stub_row = stub_row._replace(content="")
+    stub_row.content = ""
     rec = game_record(
         stub_row, control_number="bkl-bgm-0000001", suppressed=False, status_code="g"
     )
@@ -173,7 +178,7 @@ def test_game_record_missing_content(stub_row):
 
 
 def test_game_record_missing_description(stub_row):
-    stub_row = stub_row._replace(desc="")
+    stub_row.desc = ""
     rec = game_record(
         stub_row, control_number="bkl-bgm-0000001", suppressed=False, status_code="g"
     )
@@ -185,3 +190,22 @@ def test_game_record_unsuppressed(stub_row):
         stub_row, control_number="bkl-bgm-0000001", suppressed=True, status_code="g"
     )
     assert "b3=n" in rec["949"].value()
+
+
+def test_game_record_item_fields(stub_row):
+    rec = game_record(
+        stub_row, control_number="bkl-bgm-0000001", suppressed=False, status_code="g"
+    )
+    item_fields = [i.format_field() for i in rec.get_fields("960")]
+    assert sorted(item_fields) == [
+        "34444000000000 02abg 39.99 11 53 i g",
+        "34444111111111 30abg 39.99 11 53 i g",
+        "34444222222222 29abg 39.99 11 53 i g",
+        "34444333333333 67abg 39.99 11 53 i g",
+        "34444444444444 51abg 39.99 11 53 i g",
+        "34444555555555 77abg 39.99 11 53 i g",
+        "34444666666666 88abg 39.99 11 53 i g",
+        "34444777777777 41abg 39.99 11 53 i g",
+        "34444888888888 35abg 39.99 11 53 i g",
+        "34444999999999 33abg 39.99 11 53 i g",
+    ]

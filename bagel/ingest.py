@@ -1,38 +1,7 @@
 import csv
-from collections import namedtuple
 from typing import Generator
 
-Row = namedtuple(
-    "Row",
-    [
-        "processing",
-        "title",
-        "title_part",
-        "players",
-        "duration",
-        "age",
-        "central_barcodes",
-        "crown_barcodes",
-        "bushwick_barcodes",
-        "mckinley_barcodes",
-        "newutrecht_barcodes",
-        "windsor_barcodes",
-        "price",
-        "title_other",
-        "subtitle",
-        "author",
-        "isbn",
-        "upc",
-        "pub_place",
-        "publisher",
-        "pub_date",
-        "desc",
-        "content",
-        "email",
-        "adams_st_barcodes",
-        "greenpoint_barcodes",
-    ],
-)
+from bagel.models import Row
 
 
 def trim_string(string: str) -> str:
@@ -45,15 +14,14 @@ def trim_string(string: str) -> str:
             return string[:-1].strip()
         else:
             return string
-    else:
-        return ""
+    return ""
 
 
-def str2list(string: str) -> list:
+def str2list(string: str) -> list[str]:
     return [i.strip() for i in string.split(";") if i.strip() != ""]
 
 
-def form_data_reader(file: str) -> Generator:
+def form_data_reader(file: str) -> Generator[Row, None, None]:
     """
     Parses descripions from a csv file created from google sheet
     linked to submission form
@@ -79,6 +47,8 @@ def form_data_reader(file: str) -> Generator:
             windsor_barcodes = str2list(row[12])
             adams_st_barcodes = str2list(row[25])
             greenpoint_barcodes = str2list(row[26])
+            dekalb_barcodes = str2list(row[27])
+            clarendon_barcodes = str2list(row[28])
             isbns = str2list(row[17])
             upcs = str2list(row[18])
             title = trim_string(row[2])
@@ -114,4 +84,6 @@ def form_data_reader(file: str) -> Generator:
                 email=row[24],
                 adams_st_barcodes=adams_st_barcodes,
                 greenpoint_barcodes=greenpoint_barcodes,
+                dekalb_barcodes=dekalb_barcodes,
+                clarendon_barcodes=clarendon_barcodes,
             )

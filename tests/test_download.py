@@ -36,5 +36,7 @@ def test_get_metadata(tmpdir):
             "Email Address",
             "Adams St. Barcodes",
             "Greenpoint Barcodes",
+            "Dekalb Barcodes",
+            "Clarendon Barcodes",
         ]
     )
